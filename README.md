@@ -4,90 +4,78 @@ Roblox has started to use WebP instead of PNG, but they have chosen to use a ver
 ### Inject code using one of these browser extensions:
 - Gecko based: <https://addons.mozilla.org/en-GB/firefox/addon/abc-js-css-injector/>
 - Chromium based: <https://chrome.google.com/webstore/detail/nbhcbdghjpllgmfilhnhkllmkecfmpld>
+- Either: <https://violentmonkey.github.io/>
 
 ### Code:
 ```js
+// ==UserScript==
+// @name        Roblox WebP To PNG
+// @namespace   Roblox WebP To PNG
+// @match       https://www.roblox.com/*
+// @grant       none
+// @version     1.3
+// @author      @Knewest on Github
+// @source https://github.com/Knewest/Roblox-WebP-To-PNG
+// ==/UserScript==
+
 // This code changes all the lossy versions of the images on Roblox to be lossless.
 
 // Function to replace image source:
-function replaceImageSource(element, partialOriginalSrc, newSrc) {
-    var image = element.querySelector('img');
-    if(image) {
-        var currentSrc = image.getAttribute('src');
-        if(currentSrc.includes(partialOriginalSrc)) {
-            var newSrcWithReplacement = currentSrc.replace(partialOriginalSrc, newSrc);
-            image.setAttribute('src', newSrcWithReplacement);
+function replaceImageSource(elements, partialOriginalSrc, newSrc, index = 0) {
+    if (index < elements.length) {
+        var element = elements[index];
+        var image = element.querySelector('img');
+        if(image) {
+            var currentSrc = image.getAttribute('src');
+            if(currentSrc.includes(partialOriginalSrc)) {
+                var newSrcWithReplacement = currentSrc.replace(partialOriginalSrc, newSrc);
+                image.setAttribute('src', newSrcWithReplacement);
+            }
         }
+        // Call the function recursively for the next element after a delay:
+        setTimeout(function() {
+            replaceImageSource(elements, partialOriginalSrc, newSrc, index + 1);
+        }, 25);
     }
 }
 
-// Watch for changes in the DOM:
+// MutationObserver() function to watch for changes in the DOM:
 var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
         if (mutation.type === 'childList') {
-            mutation.addedNodes.forEach(function(node) {
-                if (node.nodeType === Node.ELEMENT_NODE) {
-                    replaceImageSources(node);
-                }
-            });
+            replaceImageSources();
         }
     });
 });
 var observerConfig = { childList: true, subtree: true };
 observer.observe(document, observerConfig);
 
-// Queue to store images waiting for replacement:
-var replacementQueue = [];
-var isProcessingQueue = false;
+// Function to replace image sources for all specified elements:
+function replaceImageSources() {
+    var ProfileBodyShot = document.querySelectorAll('.thumbnail-2d-container.thumbnail-span');
+    var ProfileHeadShot = document.querySelectorAll('.thumbnail-2d-container.avatar-card-image.profile-avatar-thumb');
+    var HomeFriendList = document.querySelectorAll('.thumbnail-2d-container');
+    var GameIcons1 = document.querySelectorAll('.thumbnail-2d-container.game-card-thumb-container');
+    var GameIcons2 = document.querySelectorAll('.thumbnail-2d-container.brief-game-icon');
+    var GameIconsDiscover = document.querySelectorAll('.thumbnail-2d-container.game-card-thumb');
+    var MarketplaceIcons = document.querySelectorAll('.ng-isolate-scope');
+    var ItemPage= document.querySelectorAll('.thumbnail-2d-container');
 
-// Function to replace image sources for specified element:
-function replaceImageSources(element) {
-    var ProfileBodyShot = element.querySelectorAll('.thumbnail-2d-container.thumbnail-span');
-    var ProfileHeadShot = element.querySelectorAll('.thumbnail-2d-container.avatar-card-image.profile-avatar-thumb');
-    var HomeFriendList = element.querySelectorAll('.thumbnail-2d-container');
-    var GameIcons1 = element.querySelectorAll('.thumbnail-2d-container.game-card-thumb-container');
-    var GameIcons2 = element.querySelectorAll('.thumbnail-2d-container.brief-game-icon');
-    var GameIconsDiscover = element.querySelectorAll('.thumbnail-2d-container.game-card-thumb');
-    var MarketplaceIcons = element.querySelectorAll('.ng-isolate-scope');
-    var ItemPage= element.querySelectorAll('.thumbnail-2d-container');
-
-    // Replace image sources for the first set of elements
-    enqueueReplacements(ProfileBodyShot, 'Webp/noFilter', 'PNG/noFilter');
-    enqueueReplacements(ProfileHeadShot, 'Webp/noFilter', 'PNG/noFilter');
-    enqueueReplacements(HomeFriendList, 'Webp/noFilter', 'PNG/noFilter');
-    enqueueReplacements(GameIcons1, 'Webp', 'PNG');
-    enqueueReplacements(GameIcons2, 'Webp/noFilter', 'PNG/noFilter');
-    enqueueReplacements(GameIconsDiscover, 'Webp', 'PNG');
-    enqueueReplacements(MarketplaceIcons, 'Webp', 'PNG');
-    enqueueReplacements(ItemPage, 'Webp', 'PNG');
-
-    processQueue();
-}
-
-// Function to enqueue replacements:
-function enqueueReplacements(elements, partialOriginalSrc, newSrc) {
-    elements.forEach(function(element) {
-        replacementQueue.push({ element: element, partialOriginalSrc: partialOriginalSrc, newSrc: newSrc });
-    });
-}
-
-// Function to process replacement queue:
-function processQueue() {
-    if (!isProcessingQueue && replacementQueue.length > 0) {
-        isProcessingQueue = true;
-        var replacement = replacementQueue.shift();
-        replaceImageSource(replacement.element, replacement.partialOriginalSrc, replacement.newSrc);
-        setTimeout(function() {
-            isProcessingQueue = false;
-            processQueue();
-        }, 0);
-    }
+    // Replace image sources for the first set of elements with a delay between each change
+    replaceImageSource(ProfileBodyShot, 'Webp/noFilter', 'PNG/noFilter');
+    replaceImageSource(ProfileHeadShot, 'Webp/noFilter', 'PNG/noFilter');
+    replaceImageSource(HomeFriendList, 'Webp/noFilter', 'PNG/noFilter');
+    replaceImageSource(GameIcons1, 'Webp', 'PNG');
+    replaceImageSource(GameIcons2, 'Webp/noFilter', 'PNG/noFilter');
+    replaceImageSource(GameIconsDiscover, 'Webp', 'PNG');
+    replaceImageSource(MarketplaceIcons, 'Webp', 'PNG');
+    replaceImageSource(ItemPage, 'Webp', 'PNG');
 }
 
 // Call the function once initially to replace image sources on page load:
-replaceImageSources(document);
+replaceImageSources();
 
-// v1.2 
+// v1.3
 // https://github.com/Knewest
 // Copyright (Boost Software License 1.0) 2024-2024 Knew
 ```
