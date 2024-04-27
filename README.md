@@ -4,7 +4,7 @@ Roblox has started to use WebP instead of PNG, but they have chosen to use a ver
 ### Inject code using one of these browser extensions:
 - Gecko based: <https://addons.mozilla.org/en-GB/firefox/addon/abc-js-css-injector/>
 - Chromium based: <https://chrome.google.com/webstore/detail/nbhcbdghjpllgmfilhnhkllmkecfmpld>
-- Either: <https://violentmonkey.github.io/>
+- Either/Other: <https://violentmonkey.github.io/>
 
 ### Code:
 ```js
