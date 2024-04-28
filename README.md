@@ -61,7 +61,7 @@ function replaceImageSources() {
     var MarketplaceIcons = document.querySelectorAll('.ng-isolate-scope');
     var ItemPage= document.querySelectorAll('.thumbnail-2d-container');
 
-    // Replace image sources for the first set of elements with a delay between each change
+    // Replace image sources for the first set of elements with a delay between each change:
     replaceImageSource(ProfileBodyShot, 'Webp/noFilter', 'PNG/noFilter');
     replaceImageSource(ProfileHeadShot, 'Webp/noFilter', 'PNG/noFilter');
     replaceImageSource(HomeFriendList, 'Webp/noFilter', 'PNG/noFilter');
